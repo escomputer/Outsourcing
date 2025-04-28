@@ -1,22 +1,12 @@
 package com.example.outsourcing_11.order;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.outsourcing_11.common.UserRole;
-import com.example.outsourcing_11.domain.menu.entity.Menu;
-import com.example.outsourcing_11.domain.menu.repository.MenuRepository;
-import com.example.outsourcing_11.domain.order.dto.OrderItemRequestDto;
-import com.example.outsourcing_11.domain.order.dto.OrderRequestDto;
-import com.example.outsourcing_11.domain.order.entity.Cart;
-import com.example.outsourcing_11.domain.order.entity.Order;
-import com.example.outsourcing_11.domain.order.repository.CartRepository;
-import com.example.outsourcing_11.domain.order.repository.OrderRepository;
-import com.example.outsourcing_11.domain.store.dto.StoreRequestDto;
-import com.example.outsourcing_11.domain.store.entity.Store;
-import com.example.outsourcing_11.domain.store.entity.StoreStatus;
-import com.example.outsourcing_11.domain.store.repository.StoreRepository;
-import com.example.outsourcing_11.domain.user.entity.User;
-import com.example.outsourcing_11.domain.user.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,23 +17,26 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import com.example.outsourcing_11.common.UserRole;
 import com.example.outsourcing_11.domain.menu.entity.Menu;
 import com.example.outsourcing_11.domain.menu.enums.Category;
 import com.example.outsourcing_11.domain.menu.enums.MenuStatus;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-// 응답 상태 확인용 (status().isOk(), isCreated() 등)
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-// JSON 응답 값 검증용 (jsonPath())
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
+import com.example.outsourcing_11.domain.menu.repository.MenuRepository;
+import com.example.outsourcing_11.domain.order.dto.OrderItemRequestDto;
+import com.example.outsourcing_11.domain.order.dto.OrderRequestDto;
+import com.example.outsourcing_11.domain.order.entity.Cart;
+import com.example.outsourcing_11.domain.order.entity.Order;
+import com.example.outsourcing_11.domain.order.repository.CartRepository;
+import com.example.outsourcing_11.domain.order.repository.OrderRepository;
+import com.example.outsourcing_11.domain.store.dto.StoreRequestDto;
+import com.example.outsourcing_11.domain.store.entity.Store;
+import com.example.outsourcing_11.domain.store.entity.StoreCategory;
+import com.example.outsourcing_11.domain.store.entity.StoreStatus;
+import com.example.outsourcing_11.domain.store.repository.StoreRepository;
+import com.example.outsourcing_11.domain.user.entity.User;
+import com.example.outsourcing_11.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @SpringBootTest
