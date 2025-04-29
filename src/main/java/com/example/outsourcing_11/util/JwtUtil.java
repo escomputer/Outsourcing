@@ -25,7 +25,7 @@ public class JwtUtil {
 			.claim("email", email)
 			.claim("role", role)
 			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + 1000000)) // 1시간
+			.setExpiration(new Date(System.currentTimeMillis() + 1800000)) // 30분
 			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
 			.compact();
 	}
