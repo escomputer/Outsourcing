@@ -43,6 +43,15 @@
 - Mock 객체를 통한 Service 단위 검증
 - 상태 변화 및 예외 처리 중심 테스트 커버리지 확보
 
+### ✅ 6. 판매 통계 조회
+- 점주가 자신의 가게에 대해 일별 / 주간 / 월간 매출 및 방문 고객 수 통계 조회 가능
+- LocalDateTime 기준으로 daily, weekly, monthly 타입별 조회 기간 자동 계산
+- 판매 총합(BigDecimal totalSales)과 방문 고객 수(Long totalCustomers)를 함께 제공
+- 존재하지 않거나 권한이 없는 가게 접근 시 STORE_NOT_FOUND 예외 발생
+- 유효하지 않은 기간 타입 요청 시 PERIOD_ERROR 예외 처리
+
+
+
 
 ## 🧠 설계 관점에서의 의사결정
 
