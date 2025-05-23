@@ -1,244 +1,72 @@
+# 🏪 Outsourcing Platform - Store Domain
+
+> 외주 서비스 플랫폼에서 사용자가 가게를 등록하고 운영할 수 있도록 돕는 **Store 도메인** 전반을 구현한 프로젝트입니다.  
+> 가게 등록, 수정, 공지사항, 즐겨찾기, 자동 상태 변경 등 실제 배달 앱 수준의 기능 흐름을 설계하고, 단위 테스트 및 스케줄러까지 직접 작성했습니다.
+
+---
+
+## 🛠️ 기술 스택
+
+- Java 17
+- Spring Boot 3.x
+- Spring Data JPA
+- MySQL
+- Redis
+- JUnit 5 + Mockito
+- Spring Scheduler
+
+---
+
+## 🔧 주요 구현 기능 (Store Domain)
+
+### ✅ 1. 가게 등록 / 수정 / 삭제
+- 점주 권한 사용자만 가게 생성 가능
+- 중복된 상호명 및 주소에 대한 유효성 검사
+- 수정/삭제 시 사용자 권한 및 상태값 검증 포함
+
+### ✅ 2. 공지사항 관리
+- 점주가 직접 공지사항 등록/수정/삭제 가능
+- 가게와 연관된 공지사항 일대다 매핑
+- 가게 삭제 시 공지사항 cascade 삭제 처리
+
+### ✅ 3. 즐겨찾기 기능
+- 사용자별 즐겨찾기 가게 등록/해제
+- 중복 즐겨찾기 방지 로직 포함
+- 전체 즐겨찾기 목록 조회 API 구현
+
+### ✅ 4. 자동 상태 변경 (스케줄러)
+- 가게가 특정 기간 이상 비활성화 상태일 경우 자동 비공개 처리
+- 매일 자정에 실행되는 `@Scheduled(cron = \"0 0 0 * * *\")` 기반 자동화
+
+### ✅ 5. 단위 테스트 및 통합 테스트
+- `StoreService`, `FavoriteService`, `NoticeService`에 대한 유닛 테스트 작성
+- Mock 객체를 통한 Service 단위 검증
+- 상태 변화 및 예외 처리 중심 테스트 커버리지 확보
 
 
-<h1>🚀 11조 - Spring Backend 아웃소싱 관리 시스템</h1>
+## 🧠 설계 관점에서의 의사결정
 
-<p><strong>팀원</strong> : 11조 (Spring Boot 백엔드 협업)</p>
-<p><strong>프로젝트 기간</strong> : 2024.04.22~29
+- 도메인 간 의존도를 낮추기 위해 DTO 분리 및 서비스 간 의존성 최소화
+- `StoreStatus` Enum을 중심으로 가게의 공개/비공개/삭제 상태 흐름 설계
+- 테스트 가능한 구조를 위해 인터페이스 기반 구현과 서비스 단위 Mocking 적용
+- 도메인 행위 기반 메서드 네이밍 (`store.deactivate()`, `store.updateInfo()`)
 
-<hr>
+---
 
-<h2>📚 프로젝트 소개</h2>
-<p>저희 11조는 <strong>Spring Boot</strong>를 기반으로 외주 작업(아웃소싱) 관리 시스템의 백엔드를 구축하였습니다.<br>
-본 프로젝트는 프론트엔드 없이 <strong>API 서버</strong>만 구축하며, 실제 외주 환경에서 필요한 핵심 기능을 구현하는 것을 목표로 진행했습니다.</p>
-<p><strong>회원가입, 로그인, 메뉴 관리, 가게 관리, 주문, 리뷰</strong> 등 다양한 기능을 설계하고 직접 구현하여<br>
-백엔드 협업 및 RESTful API 설계 경험을 쌓는 데 집중했습니다.</p>
+## 💡 기여도
 
+- Store CRUD + Favorite + Notice 전체 API 개발
+- 스케줄러 + 상태 자동변경 로직 설계 및 구현
+- StoreService 단위 테스트 100% 직접 작성
 
-<hr>
-<h2>🙌 팀원 역할 분담</h2>
-<table border="1">
-  <thead>
-    <tr><th>이름</th><th>담당 역할</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>김석진</td><td>회원(User) 기능 개발</td></tr>
-    <tr><td>김지환</td><td>메뉴(Menu) 기능 개발</td></tr>
-    <tr><td>정은세</td><td>가게(Store) 기능 개발</td></tr>
-    <tr><td>김형진</td><td>리뷰(Review) 기능 개발</td></tr>
-    <tr><td>남유리</td><td>주문(Order) 기능 개발</td></tr>
-  </tbody>
-</table>
+---
 
-<hr>
+## 📎 기타
+
+- 전체 시스템 인증 흐름은 팀원이 구현한 세션 기반 로그인 방식 사용
+- Postman Collection 및 Swagger UI를 통한 API 검증
+
+---
 
 
-<h2>🎯 개발 목표</h2>
-<ul>
-  <li>팀원 간 역할 분담과 협업을 통해 실제 서비스 형태에 가까운 백엔드 구축</li>
-  <li>Spring Boot 기반 MVC 설계와 계층 분리(Controller-Service-Repository) 실습</li>
-  <li>JPA를 통한 데이터베이스 연동 및 관리</li>
-  <li>RESTful API 명세를 기반으로 한 API 설계 및 구현</li>
-</ul>
 
-<hr>
-
-<h2>🛠️ 기술 스택</h2>
-<table border="1">
-  <thead>
-    <tr><th>구분</th><th>사용 기술</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Language</td><td>Java 17</td></tr>
-    <tr><td>Framework</td><td>Spring Boot 3.x</td></tr>
-    <tr><td>ORM</td><td>Spring Data JPA</td></tr>
-    <tr><td>Database</td><td>MySQL 8.x</td></tr>
-    <tr><td>Build Tool</td><td>Maven</td></tr>
-    <tr><td>IDE</td><td>IntelliJ IDEA</td></tr>
-    <tr><td>Version Control</td><td>Git / GitHub</td></tr>
-  </tbody>
-</table>
-
-<hr>
-
-<h2>📂 프로젝트 구조</h2>
-<pre>
-src/
-├── main/
-│   ├── java/
-│   │   └── com/example/outsourcing_11/src/main
-│   │       ├── controller/     # 요청을 처리하는 컨트롤러
-│   │       ├── service/         # 비즈니스 로직을 담당하는 서비스
-│   │       ├── repository/      # DB 접근을 담당하는 레포지토리
-│   │                
-│   └── resources/
-│       ├── static/              # 정적 파일
-│       ├── templates/           # (프론트 미사용)
-│       └── application.properties # 환경설정 파일
-</pre>
-
-<hr>
-
-<h2>🛠️ 주요 기능</h2>
-
-<h3>1. 사용자(User)</h3>
-<ul>
-  <li>회원가입 (Signup)</li>
-  <li>로그인 (Login)</li>
-  <li>프로필 변경(주소,비밀번호 )</li>
-  <li>유저 삭제/ 유저 수 조회</li>
-</ul>
-
-<h3>2. 메뉴(Menu)</h3>
-<ul>
-  <li>메뉴 등록</li>
-  <li>메뉴 수정</li>
-  <li>메뉴 삭제</li>
-  <li>메뉴 목록 조회</li>
-</ul>
-
-<h3>3. 가게(Store)</h3>
-<ul>
-  <li>가게 등록/수정/삭제</li>
-  <li>가게 목록 조회(단건 조회시 메뉴리스트 포함)</li>
-  <li>가게 매출/ 고객 기간별 조회</li>
-  <li>공지사항 등록/수정/삭제(사장님 권한)</li>
-  <li>즐겨찾기 등록/수정/삭제</li>
-</ul>
-
-<h3>4. 주문(Order)</h3>
-<ul>
-  <li>주문 생성</li>
-  <li>주문 목록 조회</li>
-  <li>주문 상세 조회</li>
-  <li>장바구니 기능(결제)</li>
-</ul>
-
-<h3>5. 리뷰(Review)</h3>
-<ul>
-  <li>리뷰 작성</li>
-  <li>리뷰 조회</li>
-  <li>리뷰 수정</li>
-  <li>리뷰 삭제</li>
-  <li>사장님 댓글 기능</li>
-</ul>
-
-<hr>
-
-<h2>📑 API 명세 요약 (기능 일부)</h2>
-
-<h3>🔐 User API</h3>
-<table border="1">
-  <thead>
-    <tr><th>메서드</th><th>URL</th><th>설명</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>POST</td><td>/auth/signup</td><td>회원가입</td></tr>
-    <tr><td>POST</td><td>/auth/login</td><td>로그인</td></tr>
-    <tr><td>PATCH</td><td>/user/{id}</td><td>프로필 변경</td></tr>
-  </tbody>
-</table>
-
-<h3>🍔 Menu API</h3>
-<table border="1">
-  <thead>
-    <tr><th>메서드</th><th>URL</th><th>설명</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>POST</td><td>/admin/{storeId}/menu</td><td>메뉴 등록</td></tr>
-    <tr><td>PATCH</td><td>/admin/{storeId}/menu/{menuId}</td><td>메뉴 수정</td></tr>
-    <tr><td>DELETE</td><td>/admin/{storeId}/menu/{menuId}</td><td>메뉴 삭제</td></tr>
-    <tr><td>GET</td><td>/menu?name ={name}</td><td>메뉴 조회</td></tr>
-  </tbody>
-</table>
-
-<h3>🏪 Store API</h3>
-<table border="1">
-  <thead>
-    <tr><th>메서드</th><th>URL</th><th>설명</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>POST</td><td>/stores</td><td>가게 등록</td></tr>
-    <tr><td>PUT</td><td>/stores/{storeId}</td><td>가게 수정</td></tr>
-    <tr><td>DELETE</td><td>/stores/{storeId}</td><td>가게 삭제</td></tr>
-    <tr><td>GET</td><td>/stores</td><td>가게 조회</td></tr>
-    <tr><td>POST</td><td>/stores/{storeId}/notice</td></td><td>공지 등록</td></tr>
-  </tbody>
-</table>
-
-<h3>🛒 Order API</h3>
-<table border="1">
-  <thead>
-    <tr><th>메서드</th><th>URL</th><th>설명</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>POST</td><td>/orders</td><td>주문 생성</td></tr>
-    <tr><td>GET</td><td>/orders</td><td>주문 목록 조회</td></tr>
-    <tr><td>GET</td><td>/orders/{orderId}</td><td>주문 상세 조회</td></tr>
-    <tr><td>GET</td><td>/carts/{userId}</td><td>장바구니 목록 조회</td></tr>
-    <tr><td>POST</td><td>/orders/price</td><td>주문 결제</td></tr>
-  </tbody>
-</table>
-
-<h3>⭐ Review API</h3>
-<table border="1">
-  <thead>
-    <tr><th>메서드</th><th>URL</th><th>설명</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>POST</td><td>/reviews</td><td>리뷰 작성</td></tr>
-    <tr><td>GET</td><td>/reviews</td><td>리뷰 조회</td></tr>
-    <tr><td>PATCH</td><td>/reviews/{reviewId}</td><td>리뷰 수정</td></tr>
-    <tr><td>DELETE</td><td>/reviews/{reviewId}</td><td>리뷰 삭제</td></tr>
-    <tr><td>POST</td><td>stores/{storeId}/comments{commentId}/ownerReplys</td><td>리뷰에 사장님 댓글 작성</td></tr>
-    
-  </tbody>
-</table>
-
-<hr>
-
-<h2>🚀 개발 진행 방법</h2>
-<ul>
-  <li>Github Flow 방식 사용 (dev → main 브랜치 머지)</li>
-  <li>API 설계 회의를 통한 명세 통일</li>
-  <li>Postman을 이용한 수시 테스트</li>
-</ul>
-
-<hr>
-
-
-<h2>🖼️ 적용 화면</h2>
-<ul>
-  <b>로그인 및 토큰 발급</b><br>
-  @PreAuthorize 와 @AuthenticationPrincipal 어노테이션을 사용하여,
-  유저의 정보(사장님/고객) 정보까지 담긴 로그인세션을 쉽게 받아올 수 있습니다.<br>
-  
-  <img src="https://github.com/user-attachments/assets/0add50da-9e29-4b2f-9b8b-582fe8e0a65a" width="400px">
-  <img src="https://github.com/user-attachments/assets/296dfa04-2462-41a5-b1fe-b03b34a2edd5" width="400px">
-
-  <b>장바구니에 담긴 물품 결제</b><br>
-  <img src="https://github.com/user-attachments/assets/f6d669d4-11a8-4410-9f3d-3095035dd014" width="400px">
-
-  <b>메뉴 등록</b><br>
-  <img src="https://github.com/user-attachments/assets/a3c9b198-8bef-43c3-b151-bd8419b5f4b0" width="400px">
-
-  <b>사장님의 가게 매출, 고객수 월간 조회</b><br>
-  <img src="https://github.com/user-attachments/assets/bb11d44c-c7c9-44ce-a338-9bf9c6a854bf" width="400px">
-
-  <b>사장님 리뷰 댓글 API 테스트</b><br>
-  <img src="https://github.com/user-attachments/assets/6bfb1f58-fade-4f1f-b416-292e1263c8d7" width="400px">
-</ul>
-
-<hr>
-
-
-<h2>📝 느낀 점</h2>
-<blockquote>
-Spring Boot를 이용해 API 서버를 구축하며, 계층 분리와 협업의 중요성을 실감할 수 있었습니다.<br>
-비록 배우는 단계지만, API 설계, DB 연결, 오류처리 등 실제 서비스를 만들기 위한 기본기를 탄탄히 다질 수 있었습니다.<br>
-앞으로 더 성장하는 11조가 되겠습니다!
-</blockquote>
-
-<h1>🔥 11조 화이팅!</h1>
-
-</body>
-</html>
